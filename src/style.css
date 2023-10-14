@@ -68,8 +68,7 @@ button:focus-visible {
 }
 
 canvas {
-  border: 1px solid;
-  border-color: black;
+  border: thin solid black;
   border-radius: 20px;
   filter: drop-shadow(10px 10px 4px black);
 }
