@@ -26,6 +26,7 @@ const context: CanvasRenderingContext2D = canvas.getContext("2d")!;
 app.append(canvas);
 
 const lines: Point[][] = [];
+const redoLines: Point[][] = [];
 const drawingChanged = new Event("drawing-changed");
 let currentLine: Point[] | null = null;
 
@@ -37,6 +38,7 @@ canvas.addEventListener("mousedown", (event) => {
 
   currentLine = [];
   lines.push(currentLine);
+  redoLines.splice(0, redoLines.length);
   currentLine.push({ x: cursor.x, y: cursor.y });
 
   canvas.dispatchEvent(drawingChanged);
@@ -66,6 +68,28 @@ app.append(clear);
 clear.addEventListener("click", () => {
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   context.clearRect(0, 0, canvas.width, canvas.height);
+});
+
+const undo = document.createElement("button");
+undo.innerHTML = "undo";
+app.append(undo);
+
+undo.addEventListener("click", () => {
+  if (lines.length > 0) {
+    redoLines.push(lines.pop()!);
+    canvas.dispatchEvent(drawingChanged);
+  }
+});
+
+const redo = document.createElement("button");
+redo.innerHTML = "redo";
+app.append(redo);
+
+redo.addEventListener("click", () => {
+  if (redoLines.length > 0) {
+    lines.push(redoLines.pop()!);
+    canvas.dispatchEvent(drawingChanged);
+  }
 });
 
 canvas.addEventListener("drawing-changed", () => {
