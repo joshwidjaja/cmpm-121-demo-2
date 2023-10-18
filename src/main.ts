@@ -12,6 +12,9 @@ interface Point {
   y: number;
 }
 
+let thickness = 1;
+const thinWidth = 1;
+const thickWidth = 4;
 class LineCommand {
   points: Point[];
 
@@ -21,6 +24,7 @@ class LineCommand {
 
   display(ctx: CanvasRenderingContext2D) {
     ctx.beginPath();
+    ctx.lineWidth = thickness;
     const { x, y } = this.points[0];
     ctx.moveTo(x, y);
     for (const { x, y } of this.points) {
@@ -54,6 +58,7 @@ let currentLineCommand: LineCommand | null = null;
 function redraw() {
   context.clearRect(0, 0, canvas.width, canvas.height);
   commands.forEach((cmd) => cmd.display(context));
+  //if (currentLineCommand) currentLineCommand.display(context);
 }
 
 function tick() {
@@ -67,7 +72,6 @@ canvas.addEventListener("mousedown", (event) => {
   currentLineCommand = new LineCommand(event.offsetX, event.offsetY);
   commands.push(currentLineCommand);
   redoCommands.splice(0, redoCommands.length);
-  //currentLine.push(new Point(cursor.x, cursor.y));
 
   canvas.dispatchEvent(drawingChanged);
 });
@@ -86,12 +90,32 @@ window.addEventListener("mouseup", () => {
 });
 
 app.append(document.createElement("br"));
+const thin = document.createElement("button");
+thin.innerHTML = "thin";
+app.append(thin);
+
+thin.addEventListener("click", () => {
+  thickness = thinWidth;
+  canvas.dispatchEvent(drawingChanged);
+});
+
+const thick = document.createElement("button");
+thick.innerHTML = "thick";
+app.append(thick);
+
+thick.addEventListener("click", () => {
+  thickness = thickWidth;
+  canvas.dispatchEvent(drawingChanged);
+});
+
+app.append(document.createElement("br"));
 const clear = document.createElement("button");
 clear.innerHTML = "clear";
 app.append(clear);
 
 clear.addEventListener("click", () => {
   commands.splice(0, commands.length);
+  context.clearRect(0, 0, canvas.width, canvas.height);
   canvas.dispatchEvent(drawingChanged);
 });
 
@@ -102,6 +126,7 @@ app.append(undo);
 undo.addEventListener("click", () => {
   if (commands.length > 0) {
     redoCommands.push(commands.pop()!);
+    //context.clearRect(0, 0, canvas.width, canvas.height);
     canvas.dispatchEvent(drawingChanged);
   }
 });
@@ -113,6 +138,7 @@ app.append(redo);
 redo.addEventListener("click", () => {
   if (redoCommands.length > 0) {
     commands.push(redoCommands.pop()!);
+    //context.clearRect(0, 0, canvas.width, canvas.height);
     canvas.dispatchEvent(drawingChanged);
   }
 });
