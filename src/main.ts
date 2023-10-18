@@ -47,9 +47,9 @@ class ToolCommand {
     this.x = x;
     this.y = y;
   }
-  execute() {
-    context.font = "32px monospace";
-    context.fillText(utensil, this.x, this.y);
+  draw(ctx: CanvasRenderingContext2D) {
+    ctx.font = "32px monospace";
+    ctx.fillText(utensil, this.x, this.y);
   }
 }
 
@@ -78,7 +78,7 @@ function redraw() {
   commands.forEach((cmd) => cmd.display(context));
   //if (currentLineCommand) currentLineCommand.display(context);
 
-  if (toolCommand) toolCommand.execute();
+  if (toolCommand) toolCommand.draw(context);
 }
 
 function tick() {
