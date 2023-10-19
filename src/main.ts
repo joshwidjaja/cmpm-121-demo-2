@@ -16,6 +16,9 @@ let thickness = 1;
 const thinWidth = 1;
 const thickWidth = 4;
 let utensil = "🖊️";
+
+let emoji = false;
+let selectedEmoji = "";
 class LineCommand {
   points: Point[];
 
@@ -50,6 +53,27 @@ class ToolCommand {
   draw(ctx: CanvasRenderingContext2D) {
     ctx.font = "32px monospace";
     ctx.fillText(utensil, this.x, this.y);
+  }
+}
+
+class StickerCommand {
+  points: Point[];
+  x: number;
+  y: number;
+
+  constructor(x: number, y: number) {
+    this.x = x;
+    this.y = y;
+    this.points = [];
+  }
+
+  display(ctx: CanvasRenderingContext2D) {
+    ctx.fillText(selectedEmoji, this.x, this.y);
+  }
+
+  grow(x: number, y: number) {
+    this.x = x;
+    this.y = y;
   }
 }
 
@@ -100,7 +124,11 @@ canvas.addEventListener("mouseenter", (event) => {
 // https://shoddy-paint.glitch.me/paint0.html
 canvas.addEventListener("mousedown", (event) => {
   toolCommand = null;
-  currentLineCommand = new LineCommand(event.offsetX, event.offsetY);
+  if (emoji) {
+    currentLineCommand = new StickerCommand(event.offsetX, event.offsetY);
+  } else {
+    currentLineCommand = new LineCommand(event.offsetX, event.offsetY);
+  }
   commands.push(currentLineCommand);
   redoCommands.splice(0, redoCommands.length);
 
@@ -133,6 +161,7 @@ thin.innerHTML = "thin";
 app.append(thin);
 
 thin.addEventListener("click", () => {
+  emoji = false;
   thickness = thinWidth;
   utensil = "🖊️";
   canvas.dispatchEvent(drawingChanged);
@@ -143,9 +172,40 @@ thick.innerHTML = "thick";
 app.append(thick);
 
 thick.addEventListener("click", () => {
+  emoji = false;
   thickness = thickWidth;
   utensil = "🖌️";
   canvas.dispatchEvent(drawingChanged);
+});
+
+const emoji1 = document.createElement("button");
+emoji1.innerHTML = "🎲";
+app.append(emoji1);
+
+emoji1.addEventListener("click", () => {
+  emoji = true;
+  selectedEmoji = "🎲";
+  canvas.dispatchEvent(toolChanged);
+});
+
+const emoji2 = document.createElement("button");
+emoji2.innerHTML = "❓";
+app.append(emoji2);
+
+emoji2.addEventListener("click", () => {
+  emoji = true;
+  selectedEmoji = "❓";
+  canvas.dispatchEvent(toolChanged);
+});
+
+const emoji3 = document.createElement("button");
+emoji3.innerHTML = "☂️";
+app.append(emoji3);
+
+emoji3.addEventListener("click", () => {
+  emoji = true;
+  selectedEmoji = "☂️";
+  canvas.dispatchEvent(toolChanged);
 });
 
 app.append(document.createElement("br"));
