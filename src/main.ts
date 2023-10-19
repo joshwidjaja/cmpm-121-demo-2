@@ -52,7 +52,11 @@ class ToolCommand {
   }
   draw(ctx: CanvasRenderingContext2D) {
     ctx.font = "32px monospace";
-    ctx.fillText(utensil, this.x, this.y);
+    if (emoji) {
+      ctx.fillText(selectedEmoji, this.x, this.y);
+    } else {
+      ctx.fillText(utensil, this.x, this.y);
+    }
   }
 }
 
@@ -77,6 +81,26 @@ class StickerCommand {
   }
 }
 
+class StickerButton {
+  emoji: string;
+
+  constructor(emoji: string) {
+    this.emoji = emoji;
+  }
+
+  setup() {
+    const button = document.createElement("button");
+    button.innerHTML = this.emoji;
+    app.append(button);
+
+    button.addEventListener("click", () => {
+      emoji = true;
+      selectedEmoji = this.emoji;
+      canvas.dispatchEvent(toolChanged);
+    });
+  }
+}
+
 const header = document.createElement("h1");
 header.innerHTML = gameName;
 app.append(header);
@@ -94,14 +118,13 @@ canvas.addEventListener("tool-changed", () => redraw);
 
 const commands: LineCommand[] = [];
 const redoCommands: LineCommand[] = [];
+const stickerButtons: StickerButton[] = [];
 let currentLineCommand: LineCommand | null = null;
 let toolCommand: ToolCommand | null = null;
 
 function redraw() {
   context.clearRect(0, 0, canvas.width, canvas.height);
   commands.forEach((cmd) => cmd.display(context));
-  //if (currentLineCommand) currentLineCommand.display(context);
-
   if (toolCommand) toolCommand.draw(context);
 }
 
@@ -178,37 +201,6 @@ thick.addEventListener("click", () => {
   canvas.dispatchEvent(drawingChanged);
 });
 
-const emoji1 = document.createElement("button");
-emoji1.innerHTML = "🎲";
-app.append(emoji1);
-
-emoji1.addEventListener("click", () => {
-  emoji = true;
-  selectedEmoji = "🎲";
-  canvas.dispatchEvent(toolChanged);
-});
-
-const emoji2 = document.createElement("button");
-emoji2.innerHTML = "❓";
-app.append(emoji2);
-
-emoji2.addEventListener("click", () => {
-  emoji = true;
-  selectedEmoji = "❓";
-  canvas.dispatchEvent(toolChanged);
-});
-
-const emoji3 = document.createElement("button");
-emoji3.innerHTML = "☂️";
-app.append(emoji3);
-
-emoji3.addEventListener("click", () => {
-  emoji = true;
-  selectedEmoji = "☂️";
-  canvas.dispatchEvent(toolChanged);
-});
-
-app.append(document.createElement("br"));
 const clear = document.createElement("button");
 clear.innerHTML = "clear";
 app.append(clear);
@@ -241,4 +233,22 @@ redo.addEventListener("click", () => {
     //context.clearRect(0, 0, canvas.width, canvas.height);
     canvas.dispatchEvent(drawingChanged);
   }
+});
+
+app.append(document.createElement("br"));
+stickerButtons.push(new StickerButton("🎲"));
+stickerButtons.push(new StickerButton("❓"));
+stickerButtons.push(new StickerButton("☂️"));
+
+stickerButtons.forEach((sb) => sb.setup());
+
+const custom = document.createElement("button");
+custom.innerHTML = "custom";
+app.append(custom);
+
+custom.addEventListener("click", () => {
+  const text = prompt("Custom sticker text", "🧽");
+  const sb = new StickerButton(text!);
+  stickerButtons.push(sb);
+  sb.setup();
 });
