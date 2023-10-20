@@ -72,6 +72,7 @@ class StickerCommand {
   }
 
   display(ctx: CanvasRenderingContext2D) {
+    ctx.font = "32px monospace";
     ctx.fillText(selectedEmoji, this.x, this.y);
   }
 
@@ -124,6 +125,8 @@ let toolCommand: ToolCommand | null = null;
 
 function redraw() {
   context.clearRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = "white";
+  context.fillRect(0, 0, canvas.width, canvas.height);
   commands.forEach((cmd) => cmd.display(context));
   if (toolCommand) toolCommand.draw(context);
 }
