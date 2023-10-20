@@ -236,12 +236,6 @@ redo.addEventListener("click", () => {
 });
 
 app.append(document.createElement("br"));
-stickerButtons.push(new StickerButton("🎲"));
-stickerButtons.push(new StickerButton("❓"));
-stickerButtons.push(new StickerButton("☂️"));
-
-stickerButtons.forEach((sb) => sb.setup());
-
 const custom = document.createElement("button");
 custom.innerHTML = "custom";
 app.append(custom);
@@ -251,4 +245,28 @@ custom.addEventListener("click", () => {
   const sb = new StickerButton(text!);
   stickerButtons.push(sb);
   sb.setup();
+});
+
+stickerButtons.push(new StickerButton("🎲"));
+stickerButtons.push(new StickerButton("❓"));
+stickerButtons.push(new StickerButton("☂️"));
+
+stickerButtons.forEach((sb) => sb.setup());
+
+const exporter = document.createElement("button");
+exporter.innerHTML = "export";
+app.append(exporter);
+
+exporter.addEventListener("click", () => {
+  const biggerCanvas = document.createElement("canvas");
+  biggerCanvas.width = 1024;
+  biggerCanvas.height = 1024;
+  const ctx  = biggerCanvas.getContext("2d")!;
+  ctx.scale(4, 4);
+  commands.forEach((cmd) => cmd.display(ctx));
+
+  const anchor = document.createElement("a");
+  anchor.href = biggerCanvas.toDataURL("image/png");
+  anchor.download = "sketchpad.png";
+  anchor.click();
 });
