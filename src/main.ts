@@ -204,6 +204,22 @@ thick.addEventListener("click", () => {
   canvas.dispatchEvent(drawingChanged);
 });
 
+function randomColor() {
+  return "#" + Math.floor(Math.random() * 16777215).toString(16);
+}
+
+const newColor = document.createElement("button");
+newColor.innerHTML = "new color";
+newColor.className = "random-color";
+newColor.style.color = randomColor();
+app.append(newColor);
+
+// sets pen to random color, then randomizes the color again
+newColor.addEventListener("click", () => {
+  context.strokeStyle = newColor.style.color;
+  newColor.style.color = randomColor();
+});
+
 const clear = document.createElement("button");
 clear.innerHTML = "clear";
 app.append(clear);
@@ -264,7 +280,7 @@ exporter.addEventListener("click", () => {
   const biggerCanvas = document.createElement("canvas");
   biggerCanvas.width = 1024;
   biggerCanvas.height = 1024;
-  const ctx  = biggerCanvas.getContext("2d")!;
+  const ctx = biggerCanvas.getContext("2d")!;
   ctx.scale(4, 4);
   commands.forEach((cmd) => cmd.display(ctx));
 
