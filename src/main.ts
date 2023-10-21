@@ -210,7 +210,6 @@ function randomColor() {
 
 const newColor = document.createElement("button");
 newColor.innerHTML = "new color";
-newColor.className = "random-color";
 newColor.style.color = randomColor();
 app.append(newColor);
 
